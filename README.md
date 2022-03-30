@@ -2,6 +2,6 @@
 Jantar dos Filosofos
 
 # Como usar
-gcc -o main main.c -lpthread
+gcc -o main main.c -lpthread -lrt
 
 Só assim ele compila
