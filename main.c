@@ -17,21 +17,35 @@ void* jantarFilosofos(void* f){
       int filosofo = *(int *) f; 
       while(1){
           sleep(rand()%8);
-          printf("UM FILOSOFO %d esperando garfo %d\n", filosofo, filosofo);
+          printf("UM FILOSOFO %d ESPERANDO GARFO %d\n", filosofo, filosofo);
           sem_wait(&sem_vetor[filosofo]);
           printf("FILOSOFO %d PEGOU O GARFO %d\n", filosofo, filosofo);
           if (filosofo-1 < 0){
-              printf("UM FILOSOFO %d esperando garfo %d\n", filosofo, 5);
-              sem_wait(&sem_vetor[5]);
-              printf("FILOSOFO %d PEGOU O GARFO %d\n", filosofo, 5);
+              printf("UM FILOSOFO %d ESPERANDO GARFO %d\n", filosofo, 5);
+              if (sem_trywait(&sem_vetor[5]) != -1){
+              	printf("FILOSOFO %d PEGOU O GARFO %d\n", filosofo, 5);
+              	printf("FILOSOFO %d COMEU E SOLTOU OS GARFOS\n", filosofo);
 
+			  }
+	          else {
+	          	printf("FILOSOFO %d LARGOU PRIMEIRO GARFO %d (PENSANDO) \n", filosofo, 5);
+	          	sem_post(&sem_vetor[5]);
+	          	continue;
+			  }
           } else {
-              printf("UM FILOSOFO %d esperando garfo %d\n", filosofo, filosofo-1);
-              sem_wait(&sem_vetor[5]);
-              printf("FILOSOFO %d PEGOU O GARFO %d\n", filosofo, filosofo-1);
+              printf("UM FILOSOFO %d ESPERANDO GARFO %d\n", filosofo, filosofo-1);
+              if (sem_trywait(&sem_vetor[5]) != -1){
+              	printf("FILOSOFO %d PEGOU O GARFO %d\n", filosofo, filosofo-1);
+              	printf("FILOSOFO %d COMEU E SOLTOU OS GARFOS\n", filosofo);
+
+			  }
+	          else {
+	          	printf("FILOSOFO %d LARGOU O PRIMEIRO GARFO %d (PENSANDO) \n", filosofo, filosofo-1);
+	          	sem_post(&sem_vetor[filosofo-1]);
+	          	continue;
+			  }
 
           }
-          printf("FILOSOFO %d soltou os garfos\n", filosofo);
           sem_post(&sem_vetor[filosofo]);
 
           if (filosofo-1 < 0 ) {
